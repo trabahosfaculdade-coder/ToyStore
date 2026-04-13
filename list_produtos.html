@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Produtos - ToyStore</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            color: #1f2937;
+            background:
+                radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 22%),
+                radial-gradient(circle at top right, rgba(168,85,247,0.10), transparent 20%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+            min-height: 100vh;
+        }
+
+        .nav-futuristic {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.08);
+        }
+
+        .nav-glow-line {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #60a5fa, #8b5cf6, #ec4899, #f59e0b, #60a5fa);
+            background-size: 300% 100%;
+            animation: glowMove 8s linear infinite;
+            opacity: 0.95;
+        }
+
+        @keyframes glowMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(10px);
+            opacity: 0.45;
+            pointer-events: none;
+            animation: floatOrb 6s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 80px;
+            height: 80px;
+            top: -18px;
+            left: 12%;
+            background: rgba(96, 165, 250, 0.22);
+        }
+
+        .orb-2 {
+            width: 64px;
+            height: 64px;
+            top: 6px;
+            right: 18%;
+            background: rgba(236, 72, 153, 0.18);
+            animation-delay: 1.2s;
+        }
+
+        .orb-3 {
+            width: 52px;
+            height: 52px;
+            top: 18px;
+            right: 30%;
+            background: rgba(168, 85, 247, 0.18);
+            animation-delay: 2s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(8px) translateX(6px); }
+        }
+
+        .logo-shell {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.7), 0 10px 30px rgba(99, 102, 241, 0.35);
+        }
+
+        .logo-shell::after {
+            content: "";
+            position: absolute;
+            inset: -30%;
+            background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.65) 50%, transparent 70%);
+            transform: rotate(20deg);
+            animation: shineLogo 3.5s linear infinite;
+        }
+
+        @keyframes shineLogo {
+            0% { transform: translateX(-140%) rotate(20deg); }
+            100% { transform: translateX(140%) rotate(20deg); }
+        }
+
+        .brand-title {
+            letter-spacing: 0.3px;
+            text-shadow: 0 4px 18px rgba(99, 102, 241, 0.15);
+        }
+
+        .menu-pill {
+            position: relative;
+            padding: 10px 16px;
+            border-radius: 9999px;
+            transition: all 0.28s ease;
+            text-decoration: none;
+        }
+
+        .menu-pill:hover {
+            background: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(168,85,247,0.12));
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.10);
+        }
+
+        .menu-pill.active-link {
+            color: #2563eb;
+            background: linear-gradient(135deg, rgba(96,165,250,0.16), rgba(168,85,247,0.16));
+            box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.18);
+        }
+
+        .menu-pill::before {
+            content: "";
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 6px;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.25s ease;
+        }
+
+        .menu-pill:hover::before,
+        .menu-pill.active-link::before {
+            transform: scaleX(1);
+        }
+
+        .action-icon-btn {
+            position: relative;
+            border-radius: 9999px;
+            transition: all 0.28s ease;
+        }
+
+        .action-icon-btn:hover {
+            background: linear-gradient(135deg, rgba(96,165,250,0.14), rgba(168,85,247,0.14));
+            transform: translateY(-1px) scale(1.04);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.12);
+        }
+
+        .action-icon-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(96,165,250,0.22), rgba(168,85,247,0.22));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.28s ease;
+        }
+
+        .action-icon-btn:hover::after {
+            opacity: 1;
+        }
+
+        .btn-login-future {
+            background: rgba(255,255,255,0.55);
+            border: 1px solid rgba(59,130,246,0.14);
+            box-shadow: 0 8px 20px rgba(59,130,246,0.08);
+        }
+
+        .btn-login-future:hover {
+            background: linear-gradient(135deg, rgba(96,165,250,0.14), rgba(168,85,247,0.14));
+            color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-cadastrar-future {
+            background: linear-gradient(135deg, #3b82f6, #7c3aed, #ec4899);
+            background-size: 200% 200%;
+            animation: buttonFlow 5s ease infinite;
+            box-shadow: 0 14px 28px rgba(99, 102, 241, 0.28);
+        }
+
+        .btn-cadastrar-future:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 18px 34px rgba(99, 102, 241, 0.36);
+        }
+
+        @keyframes buttonFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .page-wrap {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 40px 20px 70px;
+        }
+
+        .hero-top {
+            position: relative;
+            overflow: hidden;
+            margin-top: 18px;
+            margin-bottom: 34px;
+            padding: 42px 34px;
+            border-radius: 32px;
+            background:
+                radial-gradient(circle at top left, rgba(255,255,255,0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(255,255,255,0.10), transparent 24%),
+                linear-gradient(135deg, #4f46e5 0%, #7c3aed 45%, #ec4899 100%);
+            color: white;
+            box-shadow: 0 24px 60px rgba(76, 29, 149, 0.25);
+        }
+
+        .hero-top::after {
+            content: "";
+            position: absolute;
+            inset: auto -40px -40px auto;
+            width: 220px;
+            height: 220px;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.10);
+            filter: blur(10px);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.24);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            margin: 16px 0 10px;
+            font-size: 44px;
+            line-height: 1.05;
+            font-weight: 900;
+        }
+
+        .hero-subtitle {
+            margin: 0;
+            max-width: 720px;
+            font-size: 18px;
+            color: #e0e7ff;
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 28px;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.75);
+            border-radius: 28px;
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.10);
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 50px rgba(99, 102, 241, 0.16);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+        }
+
+        .imagem-box {
+            width: 100%;
+            height: 270px;
+            background:
+                radial-gradient(circle at top left, rgba(59,130,246,0.10), transparent 26%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            border-bottom: 1px solid #eef2ff;
+        }
+
+        .imagem-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            border-radius: 18px;
+            transition: transform 0.35s ease;
+        }
+
+        .card:hover .imagem-box img {
+            transform: scale(1.05);
+        }
+
+        .conteudo {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .categoria {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            font-size: 12px;
+            font-weight: 800;
+            color: #4f46e5;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.10), rgba(168,85,247,0.10));
+            border: 1px solid rgba(99,102,241,0.10);
+        }
+
+        .nome {
+            font-size: 23px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            color: #111827;
+            min-height: 58px;
+            line-height: 1.25;
+        }
+
+        .preco {
+            font-size: 30px;
+            color: #2563eb;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            text-align: center;
+            padding: 14px 16px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 800;
+            transition: 0.25s ease;
+        }
+
+        .btn-ver {
+            background: linear-gradient(135deg, #3b82f6, #7c3aed, #ec4899);
+            color: white;
+            box-shadow: 0 14px 28px rgba(99, 102, 241, 0.22);
+        }
+
+        .btn-ver:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 18px 32px rgba(99, 102, 241, 0.28);
+        }
+
+        .vazio {
+            text-align: center;
+            font-size: 20px;
+            color: #6b7280;
+            margin-top: 28px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            padding: 34px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 16px 30px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-futuristic">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+
+        <div style="max-width:1320px; margin:0 auto; padding:0 20px; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; min-height:80px; gap:16px; flex-wrap:wrap;">
+                <div class="flex items-center space-x-3 cursor-pointer group" onclick="window.location.href='/'">
+                    <div class="logo-shell w-12 h-12 bg-gradient-to-br from-blue-500 via-violet-600 to-pink-500 rounded-2xl flex items-center justify-center transition duration-300 group-hover:scale-110 group-hover:rotate-3">
+                        <i data-lucide="gamepad-2" class="w-6 h-6 text-white"></i>
+                    </div>
+
+                    <div class="leading-tight">
+                        <span class="brand-title block text-3xl font-extrabold bg-gradient-to-r from-blue-600 via-violet-600 to-pink-500 bg-clip-text text-transparent">
+                            ToyStore
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-[0.25em] text-blue-500/80">
+                            diversão do futuro
+                        </span>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center justify-center flex-1">
+                    <div class="flex items-center space-x-2 bg-white/55 backdrop-blur-md border border-white/60 rounded-full px-3 py-2 shadow-lg">
+                        <a href="/" class="menu-pill text-gray-700 hover:text-blue-600 font-bold transition">Início</a>
+                        <a href="/produto" class="menu-pill active-link font-bold transition">Produtos</a>
+                        <a href="/equipe" class="menu-pill text-gray-700 hover:text-blue-600 font-bold transition">Equipe</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+   
+					<div class="flex items-center space-x-3">
+
+					    <!-- NÃO LOGADO -->
+					    <div th:if="${usuarioLogado == null}" class="flex items-center space-x-3">
+
+					        <a href="/login"
+					           class="px-5 py-2.5 bg-white/60 backdrop-blur-md border border-white/60 text-blue-600 font-bold rounded-full shadow-md hover:bg-blue-50 transition">
+					            Entrar
+					        </a>
+
+					        <a href="/cadastro"
+					           class="px-5 py-2.5 bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 text-white font-extrabold rounded-full shadow-lg hover:scale-105 transition">
+					            Cadastrar
+					        </a>
+
+					    </div>
+
+					    <!-- LOGADO -->
+					    <div th:if="${usuarioLogado != null}" class="flex items-center space-x-3">
+
+					        <div class="px-4 py-2 bg-white/60 backdrop-blur-md border border-white/60 rounded-full shadow-md font-bold text-blue-600">
+					            👋 <span th:text="${usuarioLogado}"></span>
+					        </div>
+
+					        <a href="/logout"
+					           class="px-4 py-2 bg-red-100 text-red-600 font-bold rounded-full hover:bg-red-200 transition">
+					            Sair
+					        </a>
+
+					    </div>
+
+					</div>
+
+                    <div id="user-menu" class="hidden flex items-center space-x-3">
+                        <span id="username-display" class="font-bold text-gray-700"></span>
+                        <button onclick="logout()" class="p-2 text-red-600 hover:bg-red-50 rounded-full transition">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-glow-line"></div>
+    </nav>
+
+    <div class="page-wrap">
+        <div class="hero-top">
+            <span class="hero-badge">🚀 Catálogo ToyStore</span>
+            <h1 class="hero-title">Lista de Produtos</h1>
+            <p class="hero-subtitle">
+                Explore brinquedos incríveis com um visual moderno, divertido e cheio de energia, no mesmo estilo da nossa página inicial.
+            </p>
+        </div>
+
+        <div th:if="${#lists.isEmpty(produtos)}" class="vazio">
+            Nenhum produto cadastrado.
+        </div>
+
+        <div class="grid" th:if="${!#lists.isEmpty(produtos)}">
+            <div class="card" th:each="p : ${produtos}">
+                <div class="imagem-box">
+                    <img th:if="${p.imagem != null and !#strings.isEmpty(p.imagem)}"
+                         th:src="@{/uploads/{img}(img=${p.imagem})}"
+                         alt="Imagem do produto">
+
+                    <img th:if="${p.imagem == null or #strings.isEmpty(p.imagem)}"
+                         src="https://via.placeholder.com/300x300?text=Sem+Imagem"
+                         alt="Sem imagem">
+                </div>
+
+                <div class="conteudo">
+					<div class="categoria"
+					     th:text="${p.categoria != null ? p.categoria.nome : 'Sem categoria'}">
+					</div>
+                    <div class="nome" th:text="${p.nome}">Nome do Produto</div>
+                    <div class="preco">
+                        R$ <span th:text="${p.valor}">0.00</span>
+                    </div>
+
+                    <a th:href="@{/produto/{id}(id=${p.id})}" class="btn btn-ver">
+                        Ver Produto
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleCart()"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl slide-in flex flex-col">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h2 class="text-2xl font-bold flex items-center space-x-2">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <span>Carrinho</span>
+                </h2>
+                <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <p class="text-gray-500 text-center py-8">Seu carrinho está vazio</p>
+            </div>
+            <div class="p-6 border-t bg-gray-50">
+                <div class="flex justify-between mb-4 text-lg font-bold">
+                    <span>Total:</span>
+                    <span id="cart-total">R$ 0,00</span>
+                </div>
+                <button class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
+                    Finalizar Compra
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-2">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+        <span id="toast-message">Operação realizada!</span>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+        initializeData();
+        updateAuthUI();
+        updateCartUI();
+    </script>
+
+</body>
+</html>
